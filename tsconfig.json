@@ -1,0 +1,9 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": [ "@tsconfig/node-lts/tsconfig.json" ],
+	"compilerOptions": {
+		"esModuleInterop": false,
+		"strict": false
+		
+	}
+}

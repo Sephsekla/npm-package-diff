@@ -1,25 +1,30 @@
 #!/usr/bin/env node
 
-const { readFileSync } = require('fs');
-const parsedArgs = require( 'minimist' );
-const { spawnSync } = require('node:child_process');
-const { join } = require('node:path'); 
+const { readFileSync } = require( 'fs' );
+import { markdownTable } from 'markdown-table';
+const { spawnSync } = require( 'node:child_process' );
+const { join } = require( 'node:path' );
+const { parseArgs } = require( "node:util" );
 
 interface Arguments {
-	_: string[],
-	base?: string,
-	b?: string,
-	format?: string,
-	f?: string,
+	values: {
+		base?: string,
+		format?: string,
+	},
+	positionals: string[]
 };
+
+const capitaliseWord = ( word: string ) => (
+	`${ word[0].toUpperCase }${ word.slice(1) }`
+)
 
 const executeStep = ( cmd: string, args?: string[] ) => {
 	
-	const command =  spawnSync( cmd, args, { encoding: 'utf-8' } );
+	const command = spawnSync( cmd, args, { encoding: 'utf-8' } );
 	
-	if( command.status > 0 ) {
-		console.error(command.stderr);
-		process.exit(1);
+	if( command.status && command.status > 0 ) {
+		console.error( command.stderr );
+		process.exit( 1 );
 	}
 
 	return command.stdout;
@@ -27,6 +32,12 @@ const executeStep = ( cmd: string, args?: string[] ) => {
 
 const getBaselineLockfile = ( base: string ): string => {
 	const file = executeStep('git', ['show', `${base}:package-lock.json`]);
+
+	if( typeof( file ) !== 'string' ) {
+		console.error( 'Could not parse base package-lock.json' );
+		process.exit( 1 );
+	}
+
 	return JSON.parse( file );
 }
 
@@ -53,20 +64,20 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 
 	const packageChanges = {};
 
-	allPackages.forEach( ( package: string ) => {
+	allPackages.forEach( ( packageName: string ) => {
 
-		if( ! package ) {
+		if( ! packageName ) {
 			return;
 		}
 
-		const prevVersion = baselinePackages[package]?.version;
-		const newVersion = currentPackages[package]?.version;
+		const prevVersion = baselinePackages[packageName]?.version;
+		const newVersion = currentPackages[packageName]?.version;
 
 		if( prevVersion === newVersion ) {
 			return;
 		}
 
-		const packageNiceName = package.replace( 'node_modules/', '' )
+		const packageNiceName = packageName.replace( 'node_modules/', '' )
 
 		if( ! prevVersion ) {
 			packageChanges[packageNiceName] = {
@@ -114,37 +125,90 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 
 }
 
-const printMarkdown = ( packageChanges: Object ) => {
+const printMarkdownList = ( packageChanges: Object ) => {
 
 	const packageArray = Object.entries( packageChanges );
-	
-	for( const [ package, data ] of packageArray ) {
+
+	if( packageArray.length < 1 ) {
+		return;
+	}
+
+	for( const [ packageName, data ] of packageArray ) {
 		const { prevVersion, newVersion, operation } = data;
 		switch( operation ){
 			case 'install':
-				console.log( `- Installed ${ package }[${ newVersion }]`);
+				console.log( `- Install ${ packageName }[${ newVersion }]`);
 				break;
 			case 'uninstall':
-				console.log( `- Uninstalled ${ package } [${ prevVersion }]`);
+				console.log( `- Uninstall ${ packageName } [${ prevVersion }]`);
 				break;
 			case 'update':
-				console.log( `- Updated ${ package } [${ prevVersion } => ${ newVersion }]`);
+				console.log( `- Updat ${ packageName } [${ prevVersion } => ${ newVersion }]`);
 				break;
 			case 'downgrade':
-				console.log( `- Downgraded ${ package } [${ prevVersion } => ${ newVersion }]`);
+				console.log( `- Downgrade ${ packageName } [${ prevVersion } => ${ newVersion }]`);
 				break;
 			default:
-				console.log( `- Changed ${ package } [${ prevVersion } => ${ newVersion }]`);
+				console.log( `- Change ${ packageName } [${ prevVersion } => ${ newVersion }]`);
 		}
 
 	}
 }
 
+const printMarkdownTable = ( packageChanges: Object ) => {
+
+	const packageArray = Object.entries( packageChanges );
+
+	if( packageArray.length < 1 ) {
+		return;
+	}
+
+	const table = [
+		[ 
+			'Package',
+			'Operation',
+			'Base',
+			'Target',
+		],
+	];
+	
+
+	console.log( '| Package | Operation | Base | Target |' );
+	console.log( '| - | - | - | - |' );
+	
+	for( const [ packageName, data ] of packageArray ) {
+
+		const { prevVersion, newVersion, operation } = data;
+
+		table.push( [
+			capitaliseWord( packageName ),
+			operation,
+			prevVersion ?? '-',
+			newVersion ?? '-',
+		] );
+	}
+
+	console.log( markdownTable( table ) );
+}
+
+
 const run = () => {
 
-	const args: Arguments = parsedArgs(process.argv.slice(2));
-	const base: string = args.base ?? args.b ?? 'HEAD';
-	const format: string = args.format ?? args.f ?? 'markdown';
+	const args: Arguments = parseArgs({
+		options: {
+			base: {
+				type: "string",
+				short: "b",
+			},
+			format: {
+				type: "string",
+				short: "f",
+			},
+		},
+	});
+
+	const base: string = args.values.base ?? 'HEAD';
+	const format: string = args.values.format ?? 'mdtable';
 
 	const baselineLockfile: string = getBaselineLockfile( base );
 	const currentLockfile: string = getCurrentLockfile();
@@ -156,12 +220,12 @@ const run = () => {
 		return;
 	}
 
-	if ( format === 'markdown' || format === 'md' ) {
-		printMarkdown( packageChanges );
+	if ( format === 'mdlist' ) {
+		printMarkdownList( packageChanges );
 		return;
 	}
 
-	console.log( packageChanges );
+	printMarkdownTable( packageChanges );
 
 }
 
