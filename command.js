@@ -21,7 +21,7 @@ var executeStep = function (cmd, args) {
     }
     return command.stdout;
 };
-var getBaseLineLockfile = function (base) {
+var getBaselineLockfile = function (base) {
     var file = executeStep('git', ['show', "".concat(base, ":package-lock.json")]);
     return JSON.parse(file);
 };
@@ -54,7 +54,7 @@ var run = function () {
     var _a, _b;
     var args = parsedArgs(process.argv.slice(2));
     var base = (_b = (_a = args.base) !== null && _a !== void 0 ? _a : args.b) !== null && _b !== void 0 ? _b : 'HEAD';
-    var baselineLockfile = getBaseLineLockfile(base);
+    var baselineLockfile = getBaselineLockfile(base);
     var currentLockfile = getCurrentLockfile();
     diffPackages(baselineLockfile, currentLockfile);
 };

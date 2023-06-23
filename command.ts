@@ -23,7 +23,7 @@ const executeStep = ( cmd: string, args?: string[] ) => {
 	return command.stdout;
 }
 
-const getBaseLineLockfile = ( base: string ): string => {
+const getBaselineLockfile = ( base: string ): string => {
 	const file = executeStep('git', ['show', `${base}:package-lock.json`]);
 	return JSON.parse( file );
 }
@@ -66,7 +66,7 @@ const run = () => {
 	const args: Arguments = parsedArgs(process.argv.slice(2));
 	const base: string = args.base ?? args.b ?? 'HEAD';
 
-	const baselineLockfile: string = getBaseLineLockfile( base );
+	const baselineLockfile: string = getBaselineLockfile( base );
 	const currentLockfile: string = getCurrentLockfile();
 
 	diffPackages( baselineLockfile, currentLockfile );
