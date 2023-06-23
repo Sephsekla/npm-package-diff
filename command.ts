@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-const { spawnSync } = require('node:child_process');
+const { readFileSync } = require('fs');
 const parsedArgs = require( 'minimist' );
+const { spawnSync } = require('node:child_process');
+const { join } = require('node:path'); 
 
 interface Arguments {
 	_: string[],
@@ -21,9 +23,20 @@ const executeStep = ( cmd: string, args?: string[] ) => {
 	return command.stdout;
 }
 
-const getBaseLineLockfile = ( base: string ) => {
-	const command = executeStep('git', ['show', `${base}:package-lock.json`]);
-	return JSON.parse( command );
+const getBaseLineLockfile = ( base: string ): string => {
+	const file = executeStep('git', ['show', `${base}:package-lock.json`]);
+	return JSON.parse( file );
+}
+
+const getCurrentLockfile = (): string => {
+
+try {
+	const file = readFileSync( join( process.cwd(), 'package-lock.json' ), 'utf8');
+	return JSON.parse( file );
+	} catch ( error ) {
+		console.error( error );
+		process.exit( 1 );
+	}
 }
 
 const run = () => {
@@ -31,9 +44,9 @@ const run = () => {
 	const args: Arguments = parsedArgs(process.argv.slice(2));
 	const base: string = args.base ?? args.b ?? 'HEAD';
 
-	const baselineLockfile = getBaseLineLockfile( base );
+	const baselineLockfile: string = getBaseLineLockfile( base );
+	const currentLockfile: string = getCurrentLockfile();
 
-	console.log(baselineLockfile);
 }
 
 run();
