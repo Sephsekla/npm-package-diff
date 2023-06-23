@@ -39,6 +39,22 @@ try {
 	}
 }
 
+const diffPackages = ( baselineLockfile, currentLockfile ) => {
+
+	const baselinePackages = baselineLockfile?.packages ?? {};
+	const currentPackages = currentLockfile?.packages ?? {};
+
+	const allPackages = new Set( [
+		...Object.keys( currentPackages ),
+		...Object.keys( baselinePackages )
+	] );
+
+	allPackages.forEach( ( package: string ) => {
+		console.log( package );
+	} )
+
+}
+
 const run = () => {
 
 	const args: Arguments = parsedArgs(process.argv.slice(2));
@@ -46,6 +62,8 @@ const run = () => {
 
 	const baselineLockfile: string = getBaseLineLockfile( base );
 	const currentLockfile: string = getCurrentLockfile();
+
+	diffPackages( baselineLockfile, currentLockfile );
 
 }
 

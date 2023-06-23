@@ -1,4 +1,13 @@
 #!/usr/bin/env node
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var readFileSync = require('fs').readFileSync;
 var parsedArgs = require('minimist');
 var spawnSync = require('node:child_process').spawnSync;
@@ -18,13 +27,22 @@ var getBaseLineLockfile = function (base) {
 };
 var getCurrentLockfile = function () {
     try {
-        var data = readFileSync(join(process.cwd(), 'package-lock.json'), 'utf8');
-        return JSON.parse(data);
+        var file = readFileSync(join(process.cwd(), 'package-lock.json'), 'utf8');
+        return JSON.parse(file);
     }
-    catch (err) {
-        console.error(err);
+    catch (error) {
+        console.error(error);
         process.exit(1);
     }
+};
+var diffPackages = function (baselineLockfile, currentLockfile) {
+    var _a, _b;
+    var baselinePackages = (_a = baselineLockfile === null || baselineLockfile === void 0 ? void 0 : baselineLockfile.packages) !== null && _a !== void 0 ? _a : {};
+    var currentPackages = (_b = currentLockfile === null || currentLockfile === void 0 ? void 0 : currentLockfile.packages) !== null && _b !== void 0 ? _b : {};
+    var allPackages = new Set(__spreadArray(__spreadArray([], Object.keys(currentPackages), true), Object.keys(baselinePackages), true));
+    allPackages.forEach(function (package) {
+        console.log(package);
+    });
 };
 var run = function () {
     var _a, _b;
@@ -32,6 +50,6 @@ var run = function () {
     var base = (_b = (_a = args.base) !== null && _a !== void 0 ? _a : args.b) !== null && _b !== void 0 ? _b : 'HEAD';
     var baselineLockfile = getBaseLineLockfile(base);
     var currentLockfile = getCurrentLockfile();
-    console.log(currentLockfile);
+    diffPackages(baselineLockfile, currentLockfile);
 };
 run();
