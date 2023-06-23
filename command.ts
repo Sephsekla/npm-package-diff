@@ -9,6 +9,8 @@ interface Arguments {
 	_: string[],
 	base?: string,
 	b?: string,
+	format?: string,
+	f?: string,
 };
 
 const executeStep = ( cmd: string, args?: string[] ) => {
@@ -49,6 +51,8 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 		...Object.keys( baselinePackages )
 	] );
 
+	const packageChanges = {};
+
 	allPackages.forEach( ( package: string ) => {
 
 		if( ! package ) {
@@ -62,41 +66,102 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 			return;
 		}
 
+		const packageNiceName = package.replace( 'node_modules/', '' )
+
 		if( ! prevVersion ) {
-			console.log( `Installed ${ package } version ${ newVersion }`);
+			packageChanges[packageNiceName] = {
+				'operation': 'install',
+				'newVersion': newVersion,
+			}
 			return;
 		}
 
 		if( ! newVersion ) {
-			console.log( `Uninstalled ${ package } version ${ prevVersion }`);
+			packageChanges[packageNiceName] = {
+				'operation': 'uninstall',
+				'prevVersion': prevVersion,
+			}
 			return;
 		}
 
 
 		if( prevVersion < newVersion ) {
-			console.log( `Updated ${ package } from ${ prevVersion } to ${ newVersion }`);
+			packageChanges[packageNiceName] = {
+				'operation': 'update',
+				'prevVersion': prevVersion,
+				'newVersion': newVersion,
+			}
 			return;
 		}
 
 		if( prevVersion > newVersion ) {
-			console.log( `Downgraded ${ package } from ${ prevVersion } to ${ newVersion }`);
+			packageChanges[packageNiceName] = {
+				'operation': 'downgrade',
+				'prevVersion': prevVersion,
+				'newVersion': newVersion,
+			}
 			return;
 		}
 
-		console.log( `Changed ${ package } from ${ prevVersion } to ${ newVersion }`);
+		packageChanges[packageNiceName] = {
+			'operation': 'change',
+			'prevVersion': prevVersion,
+			'newVersion': newVersion,
+		}
 	} )
 
+	return packageChanges;
+
+}
+
+const printMarkdown = ( packageChanges: Object ) => {
+
+	const packageArray = Object.entries( packageChanges );
+	
+	for( const [ package, data ] of packageArray ) {
+		const { prevVersion, newVersion, operation } = data;
+		switch( operation ){
+			case 'install':
+				console.log( `- Installed ${ package }[${ newVersion }]`);
+				break;
+			case 'uninstall':
+				console.log( `- Uninstalled ${ package } [${ prevVersion }]`);
+				break;
+			case 'update':
+				console.log( `- Updated ${ package } [${ prevVersion } => ${ newVersion }]`);
+				break;
+			case 'downgrade':
+				console.log( `- Downgraded ${ package } [${ prevVersion } => ${ newVersion }]`);
+				break;
+			default:
+				console.log( `- Changed ${ package } [${ prevVersion } => ${ newVersion }]`);
+		}
+
+	}
 }
 
 const run = () => {
 
 	const args: Arguments = parsedArgs(process.argv.slice(2));
 	const base: string = args.base ?? args.b ?? 'HEAD';
+	const format: string = args.format ?? args.f ?? 'markdown';
 
 	const baselineLockfile: string = getBaselineLockfile( base );
 	const currentLockfile: string = getCurrentLockfile();
 
-	diffPackages( baselineLockfile, currentLockfile );
+	const packageChanges = diffPackages( baselineLockfile, currentLockfile );
+
+	if ( format === 'json') {
+		console.log( JSON.stringify( packageChanges ) );
+		return;
+	}
+
+	if ( format === 'markdown' || format === 'md' ) {
+		printMarkdown( packageChanges );
+		return;
+	}
+
+	console.log( packageChanges );
 
 }
 
