@@ -45,9 +45,28 @@ var diffPackages = function (baselineLockfile, currentLockfile) {
         if (!package) {
             return;
         }
-        console.log(package);
-        console.log((_a = baselinePackages[package]) === null || _a === void 0 ? void 0 : _a.version);
-        console.log((_b = currentPackages[package]) === null || _b === void 0 ? void 0 : _b.version);
+        var prevVersion = (_a = baselinePackages[package]) === null || _a === void 0 ? void 0 : _a.version;
+        var newVersion = (_b = currentPackages[package]) === null || _b === void 0 ? void 0 : _b.version;
+        if (prevVersion === newVersion) {
+            return;
+        }
+        if (!prevVersion) {
+            console.log("Installed ".concat(package, " version ").concat(newVersion));
+            return;
+        }
+        if (!newVersion) {
+            console.log("Uninstalled ".concat(package, " version ").concat(prevVersion));
+            return;
+        }
+        if (prevVersion < newVersion) {
+            console.log("Updated ".concat(package, " from ").concat(prevVersion, " to ").concat(newVersion));
+            return;
+        }
+        if (prevVersion > newVersion) {
+            console.log("Downgraded ".concat(package, " from ").concat(prevVersion, " to ").concat(newVersion));
+            return;
+        }
+        console.log("Changed ".concat(package, " from ").concat(prevVersion, " to ").concat(newVersion));
     });
 };
 var run = function () {

@@ -54,9 +54,36 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 		if( ! package ) {
 			return;
 		}
-		console.log( package );
-		console.log( baselinePackages[package]?.version );
-		console.log( currentPackages[package]?.version )
+
+		const prevVersion = baselinePackages[package]?.version;
+		const newVersion = currentPackages[package]?.version;
+
+		if( prevVersion === newVersion ) {
+			return;
+		}
+
+		if( ! prevVersion ) {
+			console.log( `Installed ${ package } version ${ newVersion }`);
+			return;
+		}
+
+		if( ! newVersion ) {
+			console.log( `Uninstalled ${ package } version ${ prevVersion }`);
+			return;
+		}
+
+
+		if( prevVersion < newVersion ) {
+			console.log( `Updated ${ package } from ${ prevVersion } to ${ newVersion }`);
+			return;
+		}
+
+		if( prevVersion > newVersion ) {
+			console.log( `Downgraded ${ package } from ${ prevVersion } to ${ newVersion }`);
+			return;
+		}
+
+		console.log( `Changed ${ package } from ${ prevVersion } to ${ newVersion }`);
 	} )
 
 }
