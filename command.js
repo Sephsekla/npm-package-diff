@@ -1,5 +1,41 @@
 #!/usr/bin/env node
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,12 +47,11 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var readFileSync = require('fs').readFileSync;
-var markdown_table_1 = require("markdown-table");
 var spawnSync = require('node:child_process').spawnSync;
 var join = require('node:path').join;
 var parseArgs = require("node:util").parseArgs;
 ;
-var capitaliseWord = function (word) { return ("".concat(word[0].toUpperCase).concat(word.slice(1))); };
+var capitaliseWord = function (word) { return ("".concat(word[0].toUpperCase()).concat(word.slice(1))); };
 var executeStep = function (cmd, args) {
     var command = spawnSync(cmd, args, { encoding: 'utf-8' });
     if (command.status && command.status > 0) {
@@ -38,8 +73,8 @@ var getCurrentLockfile = function () {
         var file = readFileSync(join(process.cwd(), 'package-lock.json'), 'utf8');
         return JSON.parse(file);
     }
-    catch (error) {
-        console.error(error);
+    catch (e) {
+        console.error(e);
         process.exit(1);
     }
 };
@@ -124,33 +159,25 @@ var printMarkdownList = function (packageChanges) {
         }
     }
 };
-var printMarkdownTable = function (packageChanges) {
-    var packageArray = Object.entries(packageChanges);
-    if (packageArray.length < 1) {
-        return;
-    }
-    var table = [
-        [
-            'Package',
-            'Operation',
-            'Base',
-            'Target',
-        ],
-    ];
-    console.log('| Package | Operation | Base | Target |');
-    console.log('| - | - | - | - |');
-    for (var _i = 0, packageArray_2 = packageArray; _i < packageArray_2.length; _i++) {
-        var _a = packageArray_2[_i], packageName = _a[0], data = _a[1];
-        var prevVersion = data.prevVersion, newVersion = data.newVersion, operation = data.operation;
-        table.push([
-            capitaliseWord(packageName),
-            operation,
-            prevVersion !== null && prevVersion !== void 0 ? prevVersion : '-',
-            newVersion !== null && newVersion !== void 0 ? newVersion : '-',
-        ]);
-    }
-    console.log((0, markdown_table_1.markdownTable)(table));
-};
+function printMarkdownTable(packageChanges) {
+    return __awaiter(this, void 0, void 0, function () {
+        var packageArray, _i, packageArray_2, _a, packageName, data, prevVersion, newVersion, operation;
+        return __generator(this, function (_b) {
+            packageArray = Object.entries(packageChanges);
+            if (packageArray.length < 1) {
+                return [2 /*return*/];
+            }
+            console.log('| Package | Operation | Base | Target |');
+            console.log('| - | - | - | - |');
+            for (_i = 0, packageArray_2 = packageArray; _i < packageArray_2.length; _i++) {
+                _a = packageArray_2[_i], packageName = _a[0], data = _a[1];
+                prevVersion = data.prevVersion, newVersion = data.newVersion, operation = data.operation;
+                console.log(" | ".concat(capitaliseWord(packageName), " | ").concat(operation, " | ").concat(prevVersion !== null && prevVersion !== void 0 ? prevVersion : '-', " | ").concat(newVersion !== null && newVersion !== void 0 ? newVersion : '-', " |"));
+            }
+            return [2 /*return*/];
+        });
+    });
+}
 var run = function () {
     var _a, _b;
     var args = parseArgs({
@@ -166,12 +193,12 @@ var run = function () {
         },
     });
     var base = (_a = args.values.base) !== null && _a !== void 0 ? _a : 'HEAD';
-    var format = (_b = args.values.format) !== null && _b !== void 0 ? _b : 'mdtable';
+    var format = (_b = args.values.format) !== null && _b !== void 0 ? _b : 'mdlist';
     var baselineLockfile = getBaselineLockfile(base);
     var currentLockfile = getCurrentLockfile();
     var packageChanges = diffPackages(baselineLockfile, currentLockfile);
     if (format === 'json') {
-        console.log(JSON.stringify(packageChanges));
+        console.log(JSON.stringify(packageChanges, null, 4));
         return;
     }
     if (format === 'mdlist') {

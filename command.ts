@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { readFileSync } = require( 'fs' );
-import { markdownTable } from 'markdown-table';
+
 const { spawnSync } = require( 'node:child_process' );
 const { join } = require( 'node:path' );
 const { parseArgs } = require( "node:util" );
@@ -15,7 +15,7 @@ interface Arguments {
 };
 
 const capitaliseWord = ( word: string ) => (
-	`${ word[0].toUpperCase }${ word.slice(1) }`
+	`${ word[0].toUpperCase() }${ word.slice(1) }`
 )
 
 const executeStep = ( cmd: string, args?: string[] ) => {
@@ -46,8 +46,8 @@ const getCurrentLockfile = (): string => {
 try {
 	const file = readFileSync( join( process.cwd(), 'package-lock.json' ), 'utf8');
 	return JSON.parse( file );
-	} catch ( error ) {
-		console.error( error );
+	} catch ( e ) {
+		console.error( e );
 		process.exit( 1 );
 	}
 }
@@ -155,7 +155,7 @@ const printMarkdownList = ( packageChanges: Object ) => {
 	}
 }
 
-const printMarkdownTable = ( packageChanges: Object ) => {
+async function printMarkdownTable ( packageChanges: Object ){
 
 	const packageArray = Object.entries( packageChanges );
 
@@ -163,15 +163,6 @@ const printMarkdownTable = ( packageChanges: Object ) => {
 		return;
 	}
 
-	const table = [
-		[ 
-			'Package',
-			'Operation',
-			'Base',
-			'Target',
-		],
-	];
-	
 
 	console.log( '| Package | Operation | Base | Target |' );
 	console.log( '| - | - | - | - |' );
@@ -179,16 +170,8 @@ const printMarkdownTable = ( packageChanges: Object ) => {
 	for( const [ packageName, data ] of packageArray ) {
 
 		const { prevVersion, newVersion, operation } = data;
-
-		table.push( [
-			capitaliseWord( packageName ),
-			operation,
-			prevVersion ?? '-',
-			newVersion ?? '-',
-		] );
+		console.log( ` | ${ capitaliseWord( packageName ) } | ${ operation } | ${ prevVersion ?? '-' } | ${ newVersion ?? '-' } |`);
 	}
-
-	console.log( markdownTable( table ) );
 }
 
 
@@ -208,7 +191,7 @@ const run = () => {
 	});
 
 	const base: string = args.values.base ?? 'HEAD';
-	const format: string = args.values.format ?? 'mdtable';
+	const format: string = args.values.format ?? 'mdlist';
 
 	const baselineLockfile: string = getBaselineLockfile( base );
 	const currentLockfile: string = getCurrentLockfile();
@@ -216,7 +199,7 @@ const run = () => {
 	const packageChanges = diffPackages( baselineLockfile, currentLockfile );
 
 	if ( format === 'json') {
-		console.log( JSON.stringify( packageChanges ) );
+		console.log( JSON.stringify( packageChanges, null, 4 ) );
 		return;
 	}
 
@@ -230,3 +213,5 @@ const run = () => {
 }
 
 run();
+
+export {};

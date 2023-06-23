@@ -21,7 +21,6 @@
   "author": "Joe Bailey-Roberts",
   "license": "MIT",
   "dependencies": {
-    "markdown-table": "^3.0.3",
     "minimist": "^1.2.8"
   },
   "devDependencies": {
