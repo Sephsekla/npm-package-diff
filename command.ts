@@ -50,7 +50,13 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 	] );
 
 	allPackages.forEach( ( package: string ) => {
+
+		if( ! package ) {
+			return;
+		}
 		console.log( package );
+		console.log( baselinePackages[package]?.version );
+		console.log( currentPackages[package]?.version )
 	} )
 
 }
