@@ -41,13 +41,13 @@ var diffPackages = function (baselineLockfile, currentLockfile) {
     var currentPackages = (_b = currentLockfile === null || currentLockfile === void 0 ? void 0 : currentLockfile.packages) !== null && _b !== void 0 ? _b : {};
     var allPackages = new Set(__spreadArray(__spreadArray([], Object.keys(currentPackages), true), Object.keys(baselinePackages), true));
     allPackages.forEach(function (package) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (!package) {
             return;
         }
         console.log(package);
-        console.log((_b = (_a = baselinePackages[package]) === null || _a === void 0 ? void 0 : _a.version) !== null && _b !== void 0 ? _b : 'Not installed');
-        console.log((_d = (_c = currentPackages[package]) === null || _c === void 0 ? void 0 : _c.version) !== null && _d !== void 0 ? _d : 'Not installed');
+        console.log((_a = baselinePackages[package]) === null || _a === void 0 ? void 0 : _a.version);
+        console.log((_b = currentPackages[package]) === null || _b === void 0 ? void 0 : _b.version);
     });
 };
 var run = function () {
