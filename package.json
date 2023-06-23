@@ -4,6 +4,7 @@
   "description": "An npm command to track changes to npm packages against a git branch.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc command.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
@@ -14,5 +15,12 @@
     "packages"
   ],
   "author": "Joe Bailey-Roberts",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "typescript": "^5.1.3"
+  }
 }
