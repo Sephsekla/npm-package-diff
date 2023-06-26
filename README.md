@@ -7,13 +7,13 @@ Generates a report of changes to npm packages in different formats. Inspired by 
 To install globally, run
 
 ```sh
-npm install -g @sephsekla/package-diff
+npm install -g @sephsekla/npm-package-diff
 ```
 
 Alternatively, you can install on the first run by specifying the package:
 
 ```sh
-npx package-diff -p @sephsekla/package-diff
+npx package-diff -p @sephsekla/npm-package-diff
 ```
 
 ### Requirements and Compatibility
