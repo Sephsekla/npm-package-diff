@@ -16,9 +16,25 @@ interface Diff {
 		prevVersion?: string,
 	},
 }
+
+interface Lockfile {
+	name: string,
+	version: string,
+	lockfileVersion?: number,
+	requires?: boolean,
+	packages: Packages,
+}
  
+
+interface Packages {
+	[key: string]: {
+		version: string,
+	},
+}
 
 export type {
 	Arguments,
 	Diff,
+	Lockfile,
+	Packages,
 }

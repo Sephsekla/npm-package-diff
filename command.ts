@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 
-import type { Arguments } from './lib/types';
+import type { Arguments, Lockfile } from './lib/types';
 
 const { parseArgs } = require( "node:util" );
 
@@ -29,8 +29,8 @@ const run = () => {
 	const base: string = args.values.base ?? 'HEAD';
 	const format: string = args.values.format ?? 'mdlist';
 
-	const baselineLockfile: string = getBaselineLockfile( base );
-	const currentLockfile: string = getCurrentLockfile();
+	const baselineLockfile: Lockfile = getBaselineLockfile( base );
+	const currentLockfile: Lockfile = getCurrentLockfile();
 
 	const packageChanges = diffPackages( baselineLockfile, currentLockfile );
 

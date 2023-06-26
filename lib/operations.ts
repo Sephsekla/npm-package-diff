@@ -1,4 +1,4 @@
-import type { Diff } from "./types";
+import type { Diff, Lockfile, Packages } from "./types";
 import { Operation } from "./enums";
 
 const { readFileSync } = require( 'fs' );
@@ -23,7 +23,7 @@ const executeCommand = ( cmd: string, args?: string[] ) => {
 /**
  * Get lockfile from the base reference.
  */
-const getBaselineLockfile = ( base: string ): string => {
+const getBaselineLockfile = ( base: string ): Lockfile => {
 	const file = executeCommand('git', [ 'show', `${base}:package-lock.json` ]);
 
 	if ( typeof( file ) !== 'string' ) {
@@ -37,7 +37,7 @@ const getBaselineLockfile = ( base: string ): string => {
 /**
  * Get lockfile from the current working directory.
  */
-const getCurrentLockfile = (): string => {
+const getCurrentLockfile = (): Lockfile => {
 
 	try {
 		const file = readFileSync( join( process.cwd(), 'package-lock.json' ), 'utf8');
@@ -48,13 +48,15 @@ const getCurrentLockfile = (): string => {
 	}
 }
 
+
+
 /**
  * Compare 2 lockfiles and return an object recording the difference between them.
  */
-const diffPackages = ( baselineLockfile: any, currentLockfile: any ) : Diff => {
+const diffPackages = ( baselineLockfile: Lockfile, currentLockfile: Lockfile ) : Diff => {
 
-	const baselinePackages = baselineLockfile?.packages ?? {};
-	const currentPackages = currentLockfile?.packages ?? {};
+	const baselinePackages: Packages = baselineLockfile?.packages ?? {};
+	const currentPackages: Packages = currentLockfile?.packages ?? {};
 
 	const allPackages = new Set( [
 		...Object.keys( currentPackages ),
