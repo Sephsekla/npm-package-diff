@@ -1,0 +1,4 @@
+*.js
+*.json
+.git
+node_modules

@@ -4,7 +4,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const { parseArgs } = require("node:util");
 const markdown_1 = require("./lib/markdown");
 const operations_1 = require("./lib/operations");
-;
+/**
+ * Run the command
+ */
 const run = () => {
     const args = parseArgs({
         options: {
