@@ -1,20 +1,12 @@
 #!/usr/bin/env node
 
+
+import type { Arguments } from './lib/types';
+
 const { parseArgs } = require( "node:util" );
 
 import { printMarkdownList, printMarkdownTable } from './lib/markdown' ;
 import { diffPackages, getBaselineLockfile, getCurrentLockfile } from './lib/operations';
-
-/**
- * Arguments used by the node command.
- */
-interface Arguments {
-	values: {
-		base?: string,
-		format?: string,
-	},
-	positionals: string[]
-}
 
 /**
  * Run the command

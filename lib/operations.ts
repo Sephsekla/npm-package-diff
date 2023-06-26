@@ -1,3 +1,6 @@
+import type { Diff } from "./types";
+import { Operation } from "./enums";
+
 const { readFileSync } = require( 'fs' );
 const { spawnSync } = require( 'node:child_process' );
 const { join } = require( 'node:path' );
@@ -48,7 +51,7 @@ const getCurrentLockfile = (): string => {
 /**
  * Compare 2 lockfiles and return an object recording the difference between them.
  */
-const diffPackages = ( baselineLockfile, currentLockfile ) => {
+const diffPackages = ( baselineLockfile: any, currentLockfile: any ) : Diff => {
 
 	const baselinePackages = baselineLockfile?.packages ?? {};
 	const currentPackages = currentLockfile?.packages ?? {};
@@ -58,7 +61,7 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 		...Object.keys( baselinePackages ),
 	] );
 
-	const packageChanges = {};
+	const packageChanges: Diff = {};
 
 	allPackages.forEach( ( packageName: string ) => {
 
@@ -73,11 +76,11 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 			return;
 		}
 
-		const packageNiceName = packageName.replace( 'node_modules/', '' )
+		const packageNiceName: string = packageName.replace( 'node_modules/', '' )
 
 		if( ! prevVersion ) {
 			packageChanges[packageNiceName] = {
-				'operation': 'install',
+				'operation': Operation.Install,
 				'newVersion': newVersion,
 			}
 			return;
@@ -85,7 +88,7 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 
 		if( ! newVersion ) {
 			packageChanges[packageNiceName] = {
-				'operation': 'uninstall',
+				'operation': Operation.Uninstall,
 				'prevVersion': prevVersion,
 			}
 			return;
@@ -94,7 +97,7 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 
 		if( prevVersion < newVersion ) {
 			packageChanges[packageNiceName] = {
-				'operation': 'update',
+				'operation': Operation.Update,
 				'prevVersion': prevVersion,
 				'newVersion': newVersion,
 			}
@@ -103,7 +106,7 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 
 		if( prevVersion > newVersion ) {
 			packageChanges[packageNiceName] = {
-				'operation': 'downgrade',
+				'operation': Operation.Downgrade,
 				'prevVersion': prevVersion,
 				'newVersion': newVersion,
 			}
@@ -111,7 +114,7 @@ const diffPackages = ( baselineLockfile, currentLockfile ) => {
 		}
 
 		packageChanges[packageNiceName] = {
-			'operation': 'change',
+			'operation': Operation.Change,
 			'prevVersion': prevVersion,
 			'newVersion': newVersion,
 		}

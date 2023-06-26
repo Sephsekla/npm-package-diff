@@ -3,7 +3,7 @@
 	"extends": [ "@tsconfig/node-lts/tsconfig.json" ],
 	"compilerOptions": {
 		"esModuleInterop": false,
-		"strict": false,
+		"strict": true,
 		"verbatimModuleSyntax": false
 		
 	}
