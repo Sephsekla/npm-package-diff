@@ -1,6 +1,6 @@
 {
   "name": "@sephsekla/npm-package-diff",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An npm command to track changes to npm packages against a git branch.",
   "main": "index.js",
   "engines": {
