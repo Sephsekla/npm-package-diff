@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 
-import type { Arguments, Lockfile } from './lib/types';
+import type { Arguments, Diff, Lockfile } from './lib/types';
 
 const { parseArgs } = require( "node:util" );
 
@@ -32,7 +32,7 @@ const run = () => {
 	const baselineLockfile: Lockfile = getBaselineLockfile( base );
 	const currentLockfile: Lockfile = getCurrentLockfile();
 
-	const packageChanges = diffPackages( baselineLockfile, currentLockfile );
+	const packageChanges: Diff = diffPackages( baselineLockfile, currentLockfile );
 
 	if ( format === 'json') {
 		console.log( JSON.stringify( packageChanges, null, 4 ) );

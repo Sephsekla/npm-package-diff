@@ -1,9 +1,10 @@
+import { Diff } from './types';
 import { capitaliseWord } from './utils';
 
 /**
  * Output a markdown-formatted list of package changes to the console.
  */
-const printMarkdownList = ( packageChanges: object ) => {
+const printMarkdownList = ( packageChanges: Diff ) => {
 
 	const packageArray = Object.entries( packageChanges );
 
@@ -21,7 +22,7 @@ const printMarkdownList = ( packageChanges: object ) => {
 				console.log( `- Uninstall ${ packageName } [${ prevVersion }]`);
 				break;
 			case 'update':
-				console.log( `- Updat ${ packageName } [${ prevVersion } => ${ newVersion }]`);
+				console.log( `- Update ${ packageName } [${ prevVersion } => ${ newVersion }]`);
 				break;
 			case 'downgrade':
 				console.log( `- Downgrade ${ packageName } [${ prevVersion } => ${ newVersion }]`);
@@ -36,7 +37,7 @@ const printMarkdownList = ( packageChanges: object ) => {
 /**
  * Output a markdown-formatted table of package changes to the console.
  */
-async function printMarkdownTable( packageChanges: object ){
+async function printMarkdownTable( packageChanges: Diff ){
 
 	const packageArray = Object.entries( packageChanges );
 
