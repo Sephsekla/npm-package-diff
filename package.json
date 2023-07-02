@@ -1,12 +1,12 @@
 {
   "name": "@sephsekla/npm-package-diff",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An npm command to track changes to npm packages against a git branch.",
   "license": "MIT",
   "author": "Joe Bailey-Roberts",
   "homepage": "https://github.com/Sephsekla/npm-package-diff#readme",
   "bugs": {
-    "url" : "https://github.com/Sephsekla/npm-package-diff/issues"
+    "url": "https://github.com/Sephsekla/npm-package-diff/issues"
   },
   "repository": {
     "type": "git",
