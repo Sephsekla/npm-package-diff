@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-issue-forms
+
+name: Feature Request
+description: Suggest a new feature
+title: "[Feature Request]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks you for your help improving this package! Please provide as much detail as you can.
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for your feature.
+      options:
+      - label: I have searched the existing issues
+        required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this address?
+      description: Please describe the problem or pain point that your suggested feature will solve.
+      placeholder: |
+        I currently am unable to ...
+        I would like to be able to ...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What is your proposed solution?
+      description: Please describe your suggested feature and how it will solve the problem outlined above.
+      placeholder: |
+        Add the option to ...
+        This will allow a user to ...
+    validations:
+      required: true

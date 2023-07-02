@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-issue-forms
+
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks you for your help improving this package! Please provide as much detail as you can.
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+      - label: I have searched the existing issues
+        required: true
+  - type: textarea
+    id: current_behaviour
+    attributes:
+      label: What Happened?
+      description: Please outline the issue that you have encountered.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behaviour
+    attributes:
+      label: Expected Behaviour
+      description: What were you expecting to happen?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Install the package on a Node 18 environment using nvm
+        1. Update @foo/bar to the latest version
+        1. Run 'npx package-diff -f json'
+        1. See error...
+    validations:
+      required: true
+  - type: input
+    attributes:
+     label: Package Version
+     description: Which version (or versions) of the package are you running?
+    validations:
+      required: true
+  - type: input
+    id: node_version
+    attributes:
+      label: Node Version
+      description: Which version (or versions) of Node are you running?
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: Please include any console errors or output from the bug.
+      render: sh
+      
