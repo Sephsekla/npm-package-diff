@@ -60,4 +60,3 @@ body:
       label: Console output
       description: Please include any console errors or output from the bug.
       render: sh
-      
