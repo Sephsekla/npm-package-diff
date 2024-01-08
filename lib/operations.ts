@@ -31,7 +31,7 @@ const getBaselineLockfile = ( base: string ): Lockfile => {
 		process.exit( 1 );
 	}
 
-	return JSON.parse( file );
+	return JSON.parse( JSON.stringify( file ) );
 };
 
 /**
